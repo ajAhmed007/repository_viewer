@@ -1,23 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+
+import axios from "axios";
 
 function App() {
+  const [username, setUsername] = useState("");
+
+  const [repos, setRepos] = useState([]);
+
+  const fetchRepos = async () => {
+    try {
+      const response = await axios.get(`/repos/${username}`);
+
+      setRepos(response.data);
+    } catch (error) {
+      console.error("Error fetching repos:", error);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Enter GitHub username"
+      />
+
+      <button onClick={fetchRepos}>Fetch Repos</button>
+
+      <ul>
+        {repos.map((repo) => (
+          <li key={repo.id}>{repo.name}</li>
+        ))}
+      </ul>
     </div>
   );
 }
